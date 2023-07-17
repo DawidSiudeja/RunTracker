@@ -1,4 +1,4 @@
-package com.example.runtracker
+package com.example.runtracker.gps
 
 import android.location.Location
 import kotlinx.coroutines.flow.Flow

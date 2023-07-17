@@ -89,9 +89,9 @@ dependencies {
     // Splash Screen
     implementation 'androidx.core:core-splashscreen:1.0.1'
 
-    // Easy Permissions
-    implementation 'pub.devrel:easypermissions:3.0.0'
-
     // Google location
     implementation 'com.google.android.gms:play-services-location:21.0.1'
+
+    // Google Map
+    implementation "com.google.maps.android:maps-compose:2.2.0"
 }

@@ -20,7 +20,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.RunTracker"
         tools:targetApi="31">
-        <service android:name=".LocationService" android:foregroundServiceType="location"/>
+        <service android:name=".gps.LocationService" android:foregroundServiceType="location"/>
         <activity
             android:name=".MainActivity"
             android:exported="true"

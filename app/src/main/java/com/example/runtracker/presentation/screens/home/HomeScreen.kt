@@ -1,11 +1,11 @@
 package com.example.runtracker.presentation.screens.home
 
+import android.content.Context
 import android.content.Intent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Button
@@ -17,7 +17,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.example.runtracker.LocationService
+import com.example.runtracker.gps.LocationService
 import com.example.runtracker.presentation.menu.Menu
 
 @Composable
@@ -27,6 +27,8 @@ fun HomeScreen(
 ) {
 
     val context = LocalContext.current
+
+    viewModel.startTrackingLocalization(context = context)
 
     Column(
         modifier = Modifier
@@ -38,23 +40,9 @@ fun HomeScreen(
                 .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Button(onClick = {
-                Intent(context, LocationService::class.java).apply {
-                    action = LocationService.ACTION_START
-                    context.startService(this)
-                }
-            }) {
-                Text("Start")
-            }
-            Spacer(modifier = Modifier.height(8.dp))
-            Button(onClick = {
-                Intent(context, LocationService::class.java).apply {
-                    action = LocationService.ACTION_STOP
-                    context.startService(this)
-                }
-            }) {
-                Text("Stop")
-            }
+
+
+
 
         }
         Menu(
@@ -64,4 +52,26 @@ fun HomeScreen(
 
     }
 
+}
+
+
+@Composable
+fun ButtonsToTestLocation(context: Context) {
+    Button(onClick = {
+        Intent(context, LocationService::class.java).apply {
+            action = LocationService.ACTION_START
+            context.startService(this)
+        }
+    }) {
+        Text("Start")
+    }
+    Spacer(modifier = Modifier.height(8.dp))
+    Button(onClick = {
+        Intent(context, LocationService::class.java).apply {
+            action = LocationService.ACTION_STOP
+            context.startService(this)
+        }
+    }) {
+        Text("Stop")
+    }
 }
