@@ -1,4 +1,4 @@
-package com.example.runtracker.presentation.screens.workouts
+package com.example.runtracker.presentation.screens.latest_workouts
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

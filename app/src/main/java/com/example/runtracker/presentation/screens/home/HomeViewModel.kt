@@ -6,18 +6,20 @@ import android.util.Log
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.runtracker.data.AppDatabase
+import com.example.runtracker.data.local.Workout
 import com.example.runtracker.gps.LocationService
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val appDatabase: AppDatabase
 ): ViewModel() {
-
-    private var locationCallback: ((Pair<String, String>) -> Unit)? = null
-
 
     fun startTrackingLocalization(context: Context) {
         Intent(context, LocationService::class.java).apply {
@@ -26,13 +28,10 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun subscribeToObservers(viewLifecycleOwner: LifecycleOwner, callback: (Pair<String, String>) -> Unit) {
-        locationCallback = callback
-        LocationService.locationLiveData.observe(viewLifecycleOwner, Observer {
-            Log.d("LocationT", "HomeViewModel. Lat: ${it.first}, Long: ${it.second}")
-            locationCallback?.invoke(it)
-        })
+    fun getAllWorkouts(): Flow<List<Workout>> {
+        return appDatabase.workoutDao().getAllWorkouts()
     }
+
 
 
 }

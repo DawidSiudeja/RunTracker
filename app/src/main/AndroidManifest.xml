@@ -23,7 +23,7 @@
         <service android:name=".gps.LocationService" android:foregroundServiceType="location"/>
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value=""/>
+            android:value="AIzaSyAKxLX251dfuZq--Z-cT09DuTSZ2JEBS7c"/>
         <activity
             android:name=".MainActivity"
             android:exported="true"

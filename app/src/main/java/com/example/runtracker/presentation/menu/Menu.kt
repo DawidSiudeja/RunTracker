@@ -69,7 +69,7 @@ fun Menu(
                 activeScreen = currentScreen
             )
             MenuElement(
-                destination = Screen.Workout,
+                destination = Screen.ActiveWorkout,
                 text = "Start",
                 icon = R.drawable.ic_start,
                 navController = navController,

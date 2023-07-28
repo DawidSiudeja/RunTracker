@@ -4,14 +4,20 @@ import android.content.Context
 import android.content.Intent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -23,6 +29,7 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.runtracker.data.local.Workout
 import com.example.runtracker.gps.LocationService
 import com.example.runtracker.presentation.menu.Menu
 import com.google.android.gms.maps.model.CameraPosition
@@ -38,22 +45,8 @@ fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
 
-    val context = LocalContext.current
 
-    viewModel.startTrackingLocalization(context = context)
-
-    var location by remember { mutableStateOf(Pair("00.00", "00.00")) }
-
-    viewModel.subscribeToObservers(viewLifecycleOwner = LocalLifecycleOwner.current) { it ->
-        location = it
-    }
-
-    var currentUserLocation = LatLng(location.first.toDouble(), location.second.toDouble())
-
-    var currentUserState = MarkerState(position = currentUserLocation)
-    var cameraPositionState = rememberCameraPositionState {
-        position = CameraPosition.fromLatLngZoom(currentUserLocation, 15f)
-    }
+    val workouts = viewModel.getAllWorkouts().collectAsState(emptyList()).value.reversed()
 
     Column(
         modifier = Modifier
@@ -66,18 +59,7 @@ fun HomeScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            GoogleMap(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(1f),
-                cameraPositionState = cameraPositionState
-            ) {
-                Marker(
-                    state = currentUserState,
-                    title = "test"
-                )
-            }
-
+            ListOfWorkouts(workouts = workouts)
 
         }
         Menu(
@@ -91,22 +73,21 @@ fun HomeScreen(
 
 
 @Composable
-fun ButtonsToTestLocation(context: Context) {
-    Button(onClick = {
-        Intent(context, LocationService::class.java).apply {
-            action = LocationService.ACTION_START
-            context.startService(this)
+fun ListOfWorkouts(
+    workouts: List<Workout>
+) {
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(1),
+    ) {
+        items(workouts.size) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                Text(text = workouts[it].id.toString())
+                Text(text = workouts[it].distance.toString())
+            }
+            Spacer(modifier = Modifier.height(30.dp))
         }
-    }) {
-        Text("Start")
-    }
-    Spacer(modifier = Modifier.height(8.dp))
-    Button(onClick = {
-        Intent(context, LocationService::class.java).apply {
-            action = LocationService.ACTION_STOP
-            context.startService(this)
-        }
-    }) {
-        Text("Stop")
     }
 }
