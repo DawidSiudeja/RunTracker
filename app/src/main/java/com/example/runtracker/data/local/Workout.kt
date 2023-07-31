@@ -20,6 +20,6 @@ data class Workout(
     val kcal: Double = 0.00,
 
     @ColumnInfo
-    val isActive: Boolean = true,
+    val isActive: Boolean = false,
 
-)
+    )

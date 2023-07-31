@@ -8,8 +8,15 @@ import androidx.lifecycle.viewModelScope
 import com.example.runtracker.data.AppDatabase
 import com.example.runtracker.data.local.Workout
 import com.example.runtracker.gps.LocationService
+import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.math.*
@@ -19,9 +26,38 @@ class ActiveWorkoutViewModel @Inject constructor(
     private val appDatabase: AppDatabase
 ): ViewModel() {
 
-    private var workoutId = 0
 
+    private var workoutId = 0
     private var locationCallback: ((Pair<String, String>) -> Unit)? = null
+
+    init {
+        viewModelScope.launch {
+            appDatabase.workoutDao().addWorkout(Workout())
+        }
+    }
+
+    fun getSpecifWorkout(workoutId: Int): Flow<Workout> {
+        return appDatabase.workoutDao().getSpecifWorkout(id = workoutId)
+    }
+
+    fun getAllWorkouts(): Flow<List<Workout>> {
+        return appDatabase.workoutDao().getAllWorkouts()
+    }
+
+    fun convertStringToListOfLatLng(input: List<String>): List<LatLng> {
+        val latLngList = mutableListOf<LatLng>()
+
+            for (locationString in input) {
+                val (latitudeStr, longitudeStr) = locationString.split(", ")
+                val latitude = latitudeStr.toDouble()
+                val longitude = longitudeStr.toDouble()
+                val latLng = LatLng(latitude, longitude)
+                latLngList.add(latLng)
+            }
+
+        return latLngList
+    }
+
 
     fun subscribeToObservers(viewLifecycleOwner: LifecycleOwner, callback: (Pair<String, String>) -> Unit) {
         locationCallback = callback
@@ -33,11 +69,11 @@ class ActiveWorkoutViewModel @Inject constructor(
 
                 val currentWorkout = appDatabase.workoutDao().getSpecifWorkout(workoutId).first()
 
-                if (workoutId != 0 && currentWorkout.isActive) {
+                if (currentWorkout.isActive) {
 
                     var newPoints: MutableList<String> = mutableListOf()
 
-                    val pointsString = it.first + ", " + it.second
+                    val pointsString = it.first + " | " + it.second
                     val oldPoints = appDatabase.workoutDao()
                         .getSpecifWorkout(workoutId).first().points.toMutableList()
 
@@ -60,21 +96,13 @@ class ActiveWorkoutViewModel @Inject constructor(
 
     fun startWorkout() {
         viewModelScope.launch {
-
-            val listOfWorkouts = appDatabase.workoutDao().getAllWorkouts().first().size
-            val workout = Workout()
-            workoutId = listOfWorkouts + 1
-            appDatabase.workoutDao().addWorkout(workout)
-
-
-            Log.d("WORKOUT", "Workout ID: $workoutId")
-
+            appDatabase.workoutDao().setActiveOfWorkout(isActive = true)
         }
     }
 
     fun endWorkout() {
         viewModelScope.launch {
-            appDatabase.workoutDao().setInactiveWorkout(isActive = false)
+            appDatabase.workoutDao().setActiveOfWorkout(isActive = false)
         }
     }
 

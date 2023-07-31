@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -53,19 +54,25 @@ fun HomeScreen(
             .fillMaxHeight(),
         verticalArrangement = Arrangement.SpaceBetween,
     ) {
+        Menu(
+            navController = navController,
+            currentScreen = "Home"
+        )
         Column(
             modifier = Modifier
                 .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            ListOfWorkouts(workouts = workouts)
+            ListOfWorkouts(
+                modifier = Modifier
+                    .height(200.dp)
+                    .weight(.5f),
+                workouts = workouts
+            )
 
         }
-        Menu(
-            navController = navController,
-            currentScreen = "Home"
-        )
+
 
     }
 
@@ -74,6 +81,7 @@ fun HomeScreen(
 
 @Composable
 fun ListOfWorkouts(
+    modifier: Modifier,
     workouts: List<Workout>
 ) {
     LazyVerticalGrid(

@@ -19,12 +19,15 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
+import com.google.maps.android.compose.Polygon
+import com.google.maps.android.compose.Polyline
 import com.google.maps.android.compose.rememberCameraPositionState
 
 @Composable
 fun GoogleMapContainer(
     viewModelHome: HomeViewModel = hiltViewModel(),
     viewModelActiveWorkout: ActiveWorkoutViewModel = hiltViewModel(),
+    listOfPoints: List<LatLng>
 ) {
 
     val context = LocalContext.current
@@ -54,6 +57,9 @@ fun GoogleMapContainer(
             state = currentUserState,
             title = "test",
             //icon = BitmapDescriptorFactory.fromResource(R.drawable.ic_marker)
+        )
+        Polyline(
+            points = listOfPoints
         )
     }
 

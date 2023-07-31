@@ -25,7 +25,7 @@ interface WorkoutDao {
     suspend fun updateKcal(kcal: Double, id: Int)
 
     @Query("UPDATE workouts_table set isActive = :isActive")
-    suspend fun setInactiveWorkout(isActive: Boolean)
+    suspend fun setActiveOfWorkout(isActive: Boolean)
 
     @Query("UPDATE workouts_table set distance = :distance WHERE id = :id")
     suspend fun updateDistance(distance: Double, id: Int)
