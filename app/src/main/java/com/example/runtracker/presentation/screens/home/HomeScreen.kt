@@ -54,26 +54,19 @@ fun HomeScreen(
             .fillMaxHeight(),
         verticalArrangement = Arrangement.SpaceBetween,
     ) {
-        Menu(
-            navController = navController,
-            currentScreen = "Home"
-        )
         Column(
             modifier = Modifier
                 .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-
             ListOfWorkouts(
-                modifier = Modifier
-                    .height(200.dp)
-                    .weight(.5f),
                 workouts = workouts
             )
-
         }
-
-
+        Menu(
+            navController = navController,
+            currentScreen = "Home"
+        )
     }
 
 }
@@ -81,11 +74,12 @@ fun HomeScreen(
 
 @Composable
 fun ListOfWorkouts(
-    modifier: Modifier,
     workouts: List<Workout>
 ) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(1),
+        contentPadding = PaddingValues(start = 0.dp, top = 10.dp, end = 0.dp, bottom = 10.dp),
+        modifier = Modifier.fillMaxHeight(.9f),
     ) {
         items(workouts.size) {
             Row(

@@ -22,4 +22,4 @@ data class Workout(
     @ColumnInfo
     val isActive: Boolean = false,
 
-    )
+)
