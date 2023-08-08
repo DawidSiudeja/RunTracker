@@ -24,10 +24,13 @@ interface WorkoutDao {
     @Query("UPDATE workouts_table set kcal = :kcal WHERE id = :id")
     suspend fun updateKcal(kcal: Double, id: Int)
 
-    @Query("UPDATE workouts_table set isActive = :isActive")
-    suspend fun setActiveOfWorkout(isActive: Boolean)
+    @Query("UPDATE workouts_table set isActive = :isActive WHERE id = :id")
+    suspend fun setActiveOfWorkout(isActive: Boolean, id: Int)
 
     @Query("UPDATE workouts_table set distance = :distance WHERE id = :id")
     suspend fun updateDistance(distance: Double, id: Int)
+
+    @Query("UPDATE workouts_table set time = time + 5 WHERE id = :id")
+    suspend fun addConstValueOfTime(id: Int)
 
 }

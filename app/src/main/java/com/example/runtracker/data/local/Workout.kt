@@ -3,6 +3,8 @@ package com.example.runtracker.data.local
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import java.time.LocalDateTime
+import java.util.Date
 
 @Entity(tableName = "workouts_table")
 data class Workout(
@@ -21,5 +23,11 @@ data class Workout(
 
     @ColumnInfo
     val isActive: Boolean = false,
+
+    @ColumnInfo
+    val date: String = LocalDateTime.now().toString(),
+
+    @ColumnInfo
+    val time: Int = 0,
 
 )

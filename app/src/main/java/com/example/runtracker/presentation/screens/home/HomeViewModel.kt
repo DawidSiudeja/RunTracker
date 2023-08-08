@@ -8,6 +8,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.runtracker.data.AppDatabase
+import com.example.runtracker.data.local.UserInfo
 import com.example.runtracker.data.local.Workout
 import com.example.runtracker.gps.LocationService
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,6 +22,14 @@ class HomeViewModel @Inject constructor(
     private val appDatabase: AppDatabase
 ): ViewModel() {
 
+    init {
+        viewModelScope.launch {
+            val userInfoSize = appDatabase.userInfoDao().getAllUserInfo().first().size
+            if (userInfoSize == 0) {
+                appDatabase.userInfoDao().addUserInfo(UserInfo())
+            }
+        }
+    }
     fun startTrackingLocalization(context: Context) {
         Intent(context, LocationService::class.java).apply {
             action = LocationService.ACTION_START

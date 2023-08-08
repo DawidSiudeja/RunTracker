@@ -10,13 +10,8 @@ import com.example.runtracker.data.local.Workout
 import com.example.runtracker.gps.LocationService
 import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.math.*
@@ -31,9 +26,7 @@ class ActiveWorkoutViewModel @Inject constructor(
     private var locationCallback: ((Pair<String, String>) -> Unit)? = null
 
     init {
-        viewModelScope.launch {
-            appDatabase.workoutDao().addWorkout(Workout())
-        }
+
     }
 
     fun getSpecifWorkout(workoutId: Int): Flow<Workout> {
@@ -67,42 +60,69 @@ class ActiveWorkoutViewModel @Inject constructor(
 
             viewModelScope.launch {
 
+                workoutId = appDatabase.workoutDao().getAllWorkouts().first().size
                 val currentWorkout = appDatabase.workoutDao().getSpecifWorkout(workoutId).first()
 
-                if (currentWorkout.isActive) {
+                if (workoutId != 0) {
+                    if (currentWorkout.isActive) {
 
-                    var newPoints: MutableList<String> = mutableListOf()
+                        var newPoints: MutableList<String> = mutableListOf()
 
-                    val pointsString = it.first + " | " + it.second
-                    val oldPoints = appDatabase.workoutDao()
-                        .getSpecifWorkout(workoutId).first().points.toMutableList()
+                        val pointsString = it.first + ", " + it.second
+                        val oldPoints = appDatabase.workoutDao()
+                            .getSpecifWorkout(workoutId).first().points.toMutableList()
 
-                    newPoints.addAll(oldPoints)
-                    newPoints.add(pointsString)
+                        newPoints.addAll(oldPoints)
+                        newPoints.add(pointsString)
 
-                    appDatabase.workoutDao().updateListPointsOfWorkout(
-                        points = newPoints.toList(),
-                        id = workoutId
-                    )
+                        appDatabase.workoutDao().updateListPointsOfWorkout(
+                            points = newPoints.toList(),
+                            id = workoutId
+                        )
 
-                    calculateDistance(newPoints, workoutId)
+                        var speedKmPerHour = 0.0
 
+                        if (currentWorkout.distance > 0 && currentWorkout.time > 0) {
+                            speedKmPerHour = (currentWorkout.distance * 1000) / (currentWorkout.time * 60 * 60)
+                        }
+
+                        val userWeight = appDatabase.userInfoDao().getAllUserInfo().first()[1].userWeight
+
+                        var burnedKcal = calculateKcal(
+                            speedKmPerHour = speedKmPerHour,
+                            time = currentWorkout.time,
+                            userWeight = userWeight
+                        )
+
+                        appDatabase.workoutDao().updateKcal(burnedKcal, workoutId)
+
+                        calculateDistance(newPoints, workoutId)
+
+                    }
                 }
-
             }
 
         })
     }
 
+    fun addConstValueOfTime() {
+        viewModelScope.launch {
+            appDatabase.workoutDao().addConstValueOfTime(id = workoutId)
+        }
+    }
+
     fun startWorkout() {
         viewModelScope.launch {
-            appDatabase.workoutDao().setActiveOfWorkout(isActive = true)
+            appDatabase.workoutDao().addWorkout(Workout())
+            val id = appDatabase.workoutDao().getAllWorkouts().first().size
+            appDatabase.workoutDao().setActiveOfWorkout(isActive = true, id = id)
         }
     }
 
     fun endWorkout() {
         viewModelScope.launch {
-            appDatabase.workoutDao().setActiveOfWorkout(isActive = false)
+            val id = appDatabase.workoutDao().getAllWorkouts().first().size
+            appDatabase.workoutDao().setActiveOfWorkout(isActive = false, id = id)
         }
     }
 
@@ -149,4 +169,28 @@ class ActiveWorkoutViewModel @Inject constructor(
         }
 
     }
+
+    private fun calculateMet(speedKmPerHour: Double): Double {
+        val metValue = when {
+            speedKmPerHour == 0.0 -> 0.0
+            speedKmPerHour < 3.2 -> 2.0 // przechadzka // Slow walk
+            speedKmPerHour < 4.8 -> 3.0 // spacer // Medium walk
+            speedKmPerHour < 6.4 -> 4.0 // szybki spacer // High walk
+            speedKmPerHour < 8.0 -> 7.0 // wolny bieg // Slow run
+            speedKmPerHour < 10.0 -> 9.0 // średni bieg // Medium run
+            else -> 12.0 // szybki bieg // High run
+        }
+        return metValue
+    }
+
+    fun calculateKcal(
+        speedKmPerHour: Double,
+        userWeight: Int,
+        time: Int
+    ): Double {
+        val met = calculateMet(speedKmPerHour)
+        return met * userWeight * (time / 3600)
+    }
+
+
 }

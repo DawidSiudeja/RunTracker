@@ -11,8 +11,6 @@ data class UserInfo(
     val id: Int = 0,
 
     @ColumnInfo
-    val latitude: String = "",
+    val userWeight: Int = 70,
 
-    @ColumnInfo
-    val longitude: String = "",
 )

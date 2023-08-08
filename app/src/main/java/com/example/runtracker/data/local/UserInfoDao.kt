@@ -10,15 +10,12 @@ import kotlinx.coroutines.flow.Flow
 interface UserInfoDao {
 
     @Query("SELECT * FROM user_info_table")
-    fun getAllUserInfo(): Flow<UserInfo>
+    fun getAllUserInfo(): Flow<List<UserInfo>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addUserInfo(userInfo: UserInfo)
 
-    @Query("UPDATE user_info_table SET latitude = :latitude")
-    suspend fun setLatitudeValue(latitude: String)
-
-    @Query("UPDATE user_info_table SET longitude = :longitude")
-    suspend fun setLongitudeValue(longitude: String)
+    @Query("UPDATE user_info_table set userWeight = :userWeight")
+    suspend fun setUserWeight(userWeight: Int)
 
 }
