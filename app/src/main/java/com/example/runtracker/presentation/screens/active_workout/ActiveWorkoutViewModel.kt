@@ -86,7 +86,7 @@ class ActiveWorkoutViewModel @Inject constructor(
                             speedKmPerHour = (currentWorkout.distance * 1000) / (currentWorkout.time * 60 * 60)
                         }
 
-                        val userWeight = appDatabase.userInfoDao().getAllUserInfo().first()[1].userWeight
+                        val userWeight = appDatabase.userInfoDao().getAllUserInfo().first()[0].userWeight
 
                         var burnedKcal = calculateKcal(
                             speedKmPerHour = speedKmPerHour,
