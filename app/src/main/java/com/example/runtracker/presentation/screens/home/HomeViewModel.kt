@@ -30,17 +30,5 @@ class HomeViewModel @Inject constructor(
             }
         }
     }
-    fun startTrackingLocalization(context: Context) {
-        Intent(context, LocationService::class.java).apply {
-            action = LocationService.ACTION_START
-            context.startService(this)
-        }
-    }
-
-    fun getAllWorkouts(): Flow<List<Workout>> {
-        return appDatabase.workoutDao().getAllWorkouts()
-    }
-
-
 
 }

@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.runtracker.data.AppDatabase
 import com.example.runtracker.data.local.UserInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -13,6 +14,11 @@ import javax.inject.Inject
 class ProfileViewModel @Inject constructor(
     private val appDatabase: AppDatabase
 ): ViewModel() {
+
+
+    fun getUserWeight(): Flow<List<UserInfo>> {
+        return appDatabase.userInfoDao().getAllUserInfo()
+    }
 
     fun setUserWeight(userWeight: Int) {
         viewModelScope.launch {

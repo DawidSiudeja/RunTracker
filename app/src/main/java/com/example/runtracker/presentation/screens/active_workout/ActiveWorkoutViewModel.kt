@@ -1,5 +1,7 @@
 package com.example.runtracker.presentation.screens.active_workout
 
+import android.content.Context
+import android.content.Intent
 import android.util.Log
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
@@ -51,6 +53,12 @@ class ActiveWorkoutViewModel @Inject constructor(
         return latLngList
     }
 
+    fun startTrackingLocalization(context: Context) {
+        Intent(context, LocationService::class.java).apply {
+            action = LocationService.ACTION_START
+            context.startService(this)
+        }
+    }
 
     fun subscribeToObservers(viewLifecycleOwner: LifecycleOwner, callback: (Pair<String, String>) -> Unit) {
         locationCallback = callback

@@ -93,7 +93,8 @@ fun ActiveWorkout(
 
         Column {
             GoogleMapContainer(
-                listOfPoints = listOfPoints
+                listOfPoints = listOfPoints,
+                navController = navController
             )
 
             Stats(

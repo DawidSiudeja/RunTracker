@@ -50,9 +50,6 @@ fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
 
-
-    val workouts = viewModel.getAllWorkouts().collectAsState(emptyList()).value.reversed()
-
     Column(
         modifier = Modifier
             .fillMaxHeight(),
@@ -63,9 +60,7 @@ fun HomeScreen(
                 .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            ListOfWorkouts(
-                workouts = workouts
-            )
+
         }
         Menu(
             navController = navController,
@@ -73,66 +68,4 @@ fun HomeScreen(
         )
     }
 
-}
-
-
-@Composable
-fun ListOfWorkouts(
-    workouts: List<Workout>
-) {
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(1),
-        contentPadding = PaddingValues(start = 20.dp, top = 10.dp, end = 20.dp, bottom = 30.dp),
-        modifier = Modifier.fillMaxHeight(.9f),
-    ) {
-        items(workouts.size) {
-            Column(
-                modifier = Modifier
-                    .padding(bottom = 10.dp)
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Start
-                ) {
-                    Text(
-                        text = workouts[it].date.substring(0,10),
-                        fontSize = 15.sp
-                    )
-                }
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Column {
-                        Text(
-                            text = "Distance",
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 18.sp
-                        )
-                        Text(
-                            text= "${workouts[it].distance.toInt()} m" ,
-                        )
-                    }
-                    Column(
-                        horizontalAlignment = Alignment.End
-                    ) {
-                        Text(
-                            text = "Kcal",
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 18.sp
-                        )
-                        Text(
-                            text= workouts[it].kcal.toInt().toString(),
-                        )
-                    }
-                }
-                Spacer(modifier = Modifier.height(10.dp))
-                Box(modifier = Modifier
-                        .fillMaxWidth()
-                        .height(1.dp)
-                        .background(Color.LightGray)
-                )
-            }
-        }
-    }
 }

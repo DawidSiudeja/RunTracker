@@ -12,3 +12,5 @@ val Pink40 = Color(0xFF7D5260)
 
 val OrangeSecondaryColor = Color(0xFFF76D00)
 val OrangeSecondaryColorAspect = Color(0xFFFF892C)
+
+val LightGreyColor = Color(0xFFEBEBEB)
