@@ -219,7 +219,11 @@ fun Stats(
                     fontSize = 20.sp
                 )
                 Text(
-                    text = "$time s"
+                    text = if (time > 60) {
+                        "${(time / 60)} min. ${(time % 60)} s"
+                    } else {
+                        "$time s"
+                    },
                 )
             }
         }

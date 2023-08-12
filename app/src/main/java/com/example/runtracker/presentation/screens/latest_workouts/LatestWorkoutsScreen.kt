@@ -1,6 +1,7 @@
 package com.example.runtracker.presentation.screens.latest_workouts
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -25,6 +26,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.runtracker.data.local.Workout
+import com.example.runtracker.navigation.Screen
 import com.example.runtracker.presentation.menu.Menu
 
 @Composable
@@ -46,7 +48,8 @@ fun LatestWorkoutsScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             ListOfWorkouts(
-                workouts = workouts
+                workouts = workouts,
+                navController = navController
             )
         }
         Menu(
@@ -61,7 +64,8 @@ fun LatestWorkoutsScreen(
 
 @Composable
 fun ListOfWorkouts(
-    workouts: List<Workout>
+    workouts: List<Workout>,
+    navController: NavController
 ) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(1),
@@ -72,6 +76,13 @@ fun ListOfWorkouts(
             Column(
                 modifier = Modifier
                     .padding(bottom = 10.dp)
+                    .clickable {
+                        navigate(
+                            navController = navController,
+                            destination = Screen.EndedWorkout,
+                            arguments = listOf(workouts[it].id)
+                        )
+                    }
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -122,4 +133,18 @@ fun ListOfWorkouts(
             }
         }
     }
+}
+
+
+private fun navigate(navController: NavController, destination: Screen, arguments: List<Any>? = null) {
+
+    var destinationString = destination.route
+
+    if (arguments != null) {
+        for (element in arguments) {
+            destinationString += "/$element"
+        }
+    }
+
+    navController.navigate(destinationString)
 }

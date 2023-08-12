@@ -1,10 +1,13 @@
 package com.example.runtracker.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.runtracker.presentation.screens.active_workout.ActiveWorkout
+import com.example.runtracker.presentation.screens.ended_workout.EndedWorkout
 import com.example.runtracker.presentation.screens.home.HomeScreen
 import com.example.runtracker.presentation.screens.profile.ProfileScreen
 import com.example.runtracker.presentation.screens.settings.SettingsScreen
@@ -44,9 +47,23 @@ fun SetupNavigation() {
         }
 
         composable(
-            route = Screen.EndedWorkout.route
-        ) {
+            route = Screen.EndedWorkout.route + "/{workoutId}",
+            arguments = listOf(
+                navArgument(
+                    name = "workoutId"
+                ) {
+                    type = NavType.StringType
+                    defaultValue = ""
+                }
+            )
+        ) { backStackEntry ->
 
+            val workoutId = requireNotNull(backStackEntry.arguments).getString("workoutId").toString()
+
+            EndedWorkout(
+                navController = navController,
+                workoutId = workoutId
+            )
         }
 
         composable(

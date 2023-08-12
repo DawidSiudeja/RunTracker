@@ -27,9 +27,6 @@ class ActiveWorkoutViewModel @Inject constructor(
     private var workoutId = 0
     private var locationCallback: ((Pair<String, String>) -> Unit)? = null
 
-    init {
-
-    }
 
     fun getSpecifWorkout(workoutId: Int): Flow<Workout> {
         return appDatabase.workoutDao().getSpecifWorkout(id = workoutId)
