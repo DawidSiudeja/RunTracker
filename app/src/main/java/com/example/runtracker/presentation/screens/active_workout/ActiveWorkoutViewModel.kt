@@ -8,7 +8,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.runtracker.data.AppDatabase
-import com.example.runtracker.data.local.Workout
+import com.example.runtracker.domain.models.Workout
 import com.example.runtracker.gps.LocationService
 import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.lifecycle.HiltViewModel

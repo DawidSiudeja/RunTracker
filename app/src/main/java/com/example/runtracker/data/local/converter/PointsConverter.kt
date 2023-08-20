@@ -1,4 +1,4 @@
-package com.example.runtracker.data.local
+package com.example.runtracker.data.local.converter
 
 import androidx.room.TypeConverter
 import com.google.gson.Gson

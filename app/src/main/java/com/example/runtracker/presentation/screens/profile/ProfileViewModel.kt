@@ -3,10 +3,9 @@ package com.example.runtracker.presentation.screens.profile
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.runtracker.data.AppDatabase
-import com.example.runtracker.data.local.UserInfo
+import com.example.runtracker.domain.models.UserInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 

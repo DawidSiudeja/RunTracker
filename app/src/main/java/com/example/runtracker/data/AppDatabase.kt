@@ -3,11 +3,11 @@ package com.example.runtracker.data
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.example.runtracker.data.local.PointsConverter
-import com.example.runtracker.data.local.UserInfo
-import com.example.runtracker.data.local.UserInfoDao
-import com.example.runtracker.data.local.Workout
-import com.example.runtracker.data.local.WorkoutDao
+import com.example.runtracker.data.local.converter.PointsConverter
+import com.example.runtracker.domain.models.UserInfo
+import com.example.runtracker.data.local.dao.UserInfoDao
+import com.example.runtracker.domain.models.Workout
+import com.example.runtracker.data.local.dao.WorkoutDao
 
 @Database(entities = [UserInfo::class, Workout::class], version = 1)
 @TypeConverters(PointsConverter::class)

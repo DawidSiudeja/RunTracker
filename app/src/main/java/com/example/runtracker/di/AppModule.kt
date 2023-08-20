@@ -3,6 +3,10 @@ package com.example.runtracker.di
 import android.content.Context
 import androidx.room.Room
 import com.example.runtracker.data.AppDatabase
+import com.example.runtracker.data.local.dao.WorkoutDao
+import com.example.runtracker.data.local.repository.WorkoutRepository
+import com.example.runtracker.domain.use_cases.UseCases
+import com.example.runtracker.domain.use_cases.get_all_workouts_use_case.GetAllWorkoutsUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -24,6 +28,25 @@ object AppModule {
             AppDatabase::class.java,
             "app_database"
         ).build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideWorkoutDao(appDatabase: AppDatabase): WorkoutDao {
+        return appDatabase.workoutDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideRepository(workoutDao: WorkoutDao): WorkoutRepository {
+        return WorkoutRepository(workoutDao)
+    }
+    @Provides
+    @Singleton
+    fun provideUseCases(workoutRepository: WorkoutRepository): UseCases {
+        return UseCases(
+            getAllWorkoutsUseCase = GetAllWorkoutsUseCase(workoutRepository)
+        )
     }
 
 }

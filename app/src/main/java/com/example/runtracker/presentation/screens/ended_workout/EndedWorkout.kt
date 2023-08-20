@@ -10,7 +10,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.example.runtracker.data.local.Workout
+import com.example.runtracker.domain.models.Workout
 import com.example.runtracker.presentation.screens.active_workout.Stats
 import com.example.runtracker.presentation.screens.home.GoogleMapContainer
 

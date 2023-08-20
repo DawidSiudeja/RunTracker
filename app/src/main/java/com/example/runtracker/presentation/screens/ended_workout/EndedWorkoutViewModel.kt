@@ -2,7 +2,7 @@ package com.example.runtracker.presentation.screens.ended_workout
 
 import androidx.lifecycle.ViewModel
 import com.example.runtracker.data.AppDatabase
-import com.example.runtracker.data.local.Workout
+import com.example.runtracker.domain.models.Workout
 import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow

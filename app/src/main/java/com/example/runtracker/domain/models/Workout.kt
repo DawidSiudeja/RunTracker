@@ -1,4 +1,4 @@
-package com.example.runtracker.data.local
+package com.example.runtracker.domain.models
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.example.runtracker.data.local.Workout
+import com.example.runtracker.domain.models.Workout
 import com.example.runtracker.navigation.Screen
 import com.example.runtracker.presentation.menu.Menu
 
