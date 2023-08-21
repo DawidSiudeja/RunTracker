@@ -131,7 +131,7 @@ class ActiveWorkoutViewModel @Inject constructor(
         }
     }
 
-    private fun calculateDistance(pointList: MutableList<String>, workoutId: Int) {
+    fun calculateDistance(pointList: MutableList<String>, workoutId: Int): Double {
 
         val earthRadius = 6371.0
         var i = pointList.size - 1
@@ -156,7 +156,10 @@ class ActiveWorkoutViewModel @Inject constructor(
             val lat1 = Math.toRadians(firstLatitude)
             val lat2 = Math.toRadians(secondLongitude)
 
-            val a = sin(dLat / 2) * sin(dLat / 2) + sin(dLon / 2) * sin(dLon / 2) * cos(lat1) * cos(lat2)
+
+            val a = sin(dLat / 2) * sin(dLat / 2) +
+                    cos(Math.toRadians(lat1)) * cos(Math.toRadians(lat2)) *
+                    sin(dLon / 2) * sin(dLon / 2)
             val c = 2 * atan2(sqrt(a), sqrt(1 - a))
 
             val segmentDistance = earthRadius * c * 1000 // Distance in meter
@@ -169,9 +172,13 @@ class ActiveWorkoutViewModel @Inject constructor(
                 var distance = currentDistance + segmentDistance
 
                 appDatabase.workoutDao().updateDistance(distance, workoutId)
+
             }
+            return segmentDistance
 
         }
+
+        return 0.0
 
     }
 
@@ -196,6 +203,5 @@ class ActiveWorkoutViewModel @Inject constructor(
         val met = calculateMet(speedKmPerHour)
         return met * userWeight * (time / 3600)
     }
-
 
 }

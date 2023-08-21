@@ -1,7 +1,8 @@
-package com.example.runtracker.domain.use_cases.get_all_workouts_use_case
+package com.example.use_cases.get_all_workouts_use_case
 
 import com.example.runtracker.data.local.repository.WorkoutRepository
 import com.example.runtracker.domain.models.Workout
+import com.example.runtracker.domain.use_cases.get_all_workouts_use_case.GetAllWorkoutsUseCase
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.flowOf
@@ -37,9 +38,6 @@ class GetAllWorkoutsUseCaseTest {
                 result.addAll(workouts)
             }
         }
-
         assertEquals(expectedWorkouts[0], result[0])
-
-
     }
 }
