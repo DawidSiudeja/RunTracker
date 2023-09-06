@@ -11,6 +11,23 @@ data class UserInfo(
     val id: Int = 0,
 
     @ColumnInfo
+    val nickname: String = "Your nick",
+
+    @ColumnInfo
     val userWeight: Int = 70,
 
+    @ColumnInfo
+    val age: Int = 0,
+
+    // Monthly goal
+    @ColumnInfo
+    val kilometersGoal: Int = 50,
+
+    // Monthly goal
+    @ColumnInfo
+    val workoutsGoal: Int = 10,
+
+    // Daily goal
+    @ColumnInfo
+    val stepsGoal: Int = 10000,
 )
