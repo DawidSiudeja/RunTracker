@@ -1,4 +1,4 @@
-package com.example.runtracker.presentation.screens.home
+package com.example.runtracker.presentation.components
 
 import android.content.Context
 import android.graphics.Bitmap
@@ -7,15 +7,11 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.example.runtracker.R
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
@@ -23,6 +19,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.runtracker.navigation.Screen
 import com.example.runtracker.presentation.screens.active_workout.ActiveWorkoutViewModel
+import com.example.runtracker.ui.theme.OrangeSecondaryColor
+import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
@@ -35,41 +33,44 @@ import com.google.maps.android.compose.rememberCameraPositionState
 
 @Composable
 fun GoogleMapContainer(
-    viewModelActiveWorkout: ActiveWorkoutViewModel = hiltViewModel(),
     listOfPoints: List<LatLng>,
-    navController: NavController
+    navController: NavController,
+    locationData: Pair<String, String>
 ) {
-
     val context = LocalContext.current
 
-    viewModelActiveWorkout.startTrackingLocalization(context = context)
+    val location: Pair<String, String>
 
-    var location by remember { mutableStateOf(Pair("00.00", "00.00")) }
-
-    viewModelActiveWorkout.subscribeToObservers(viewLifecycleOwner = LocalLifecycleOwner.current) { it ->
-        location = it
+    if (locationData == null) {
+        location = Pair("00.00", "00.00")
+    } else {
+        location = locationData
     }
 
     var currentUserLocation = LatLng(location.first.toDouble(), location.second.toDouble())
 
     var currentUserState = MarkerState(position = currentUserLocation)
+
     var cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(currentUserLocation, 15f)
     }
+
+    LaunchedEffect(location) {
+        val newCameraPosition = CameraPosition.fromLatLngZoom(currentUserLocation, 15f)
+        val cameraUpdate = CameraUpdateFactory.newCameraPosition(newCameraPosition)
+        cameraPositionState.animate(cameraUpdate, 1000)
+    }
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .aspectRatio(1f)
+            .height(400.dp)
     ) {
         GoogleMap(
             modifier = Modifier
                 .fillMaxSize(),
             cameraPositionState = cameraPositionState,
         ) {
-            /*Marker(
-                state = currentUserState,
-                title = "test",
-            )*/
             MapMarker(
                 context = context,
                 position = currentUserState,
@@ -78,7 +79,8 @@ fun GoogleMapContainer(
                 iconResourceId = R.drawable.ic_marker
             )
             Polyline(
-                points = listOfPoints
+                points = listOfPoints,
+                color = OrangeSecondaryColor
             )
         }
 
@@ -94,7 +96,6 @@ fun GoogleMapContainer(
                 .align(Alignment.TopStart)
         )
     }
-
 }
 
 
@@ -122,7 +123,6 @@ fun bitmapDescriptor(
     vectorResId: Int
 ): BitmapDescriptor? {
 
-    // retrieve the actual drawable
     val drawable = ContextCompat.getDrawable(context, vectorResId) ?: return null
     drawable.setBounds(0, 0, drawable.intrinsicWidth, drawable.intrinsicHeight)
     val bm = Bitmap.createBitmap(
@@ -131,7 +131,6 @@ fun bitmapDescriptor(
         Bitmap.Config.ARGB_8888
     )
 
-    // draw it onto the bitmap
     val canvas = android.graphics.Canvas(bm)
     drawable.draw(canvas)
     return BitmapDescriptorFactory.fromBitmap(bm)

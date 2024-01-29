@@ -1,31 +1,29 @@
 package com.example.runtracker.gps
 
-import android.app.NotificationManager
+import android.Manifest
 import android.app.Service
-import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.location.Location
 import android.os.IBinder
 import android.util.Log
-import androidx.core.app.NotificationCompat
-import androidx.lifecycle.MutableLiveData
-import com.example.runtracker.R
-import com.example.runtracker.constants.Constants.CHANNEL_ID
+import androidx.core.app.ActivityCompat
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationAvailability
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import javax.inject.Inject
 
 @AndroidEntryPoint
-class LocationService (): Service() {
+class LocationService: Service() {
 
-    private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
-    private lateinit var locationClient: LocationClient
+    @Inject
+    lateinit var locationRepository: LocationRepository
 
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
 
     override fun onBind(p0: Intent?): IBinder? {
         return null
@@ -33,64 +31,49 @@ class LocationService (): Service() {
 
     override fun onCreate() {
         super.onCreate()
-        locationClient = DefaultLocationClient(
-            applicationContext,
-            LocationServices.getFusedLocationProviderClient(applicationContext)
-        )
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(applicationContext)
+        trackingRealtimeLocation()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        when(intent?.action) {
-            ACTION_START -> start()
-            ACTION_STOP -> stop()
-        }
-        return super.onStartCommand(intent, flags, startId)
-    }
-
-    private fun start() {
-        val notification = NotificationCompat.Builder(this, CHANNEL_ID)
-            .setContentTitle("Tracking location...")
-            .setContentText("Location: null")
-            .setSmallIcon(R.drawable.ic_launcher_background)
-            .setOngoing(true)
-
-        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-
-        locationClient.getLocationUpdates(1000L)
-            .catch { e-> e.printStackTrace() }
-            .onEach { location ->
-                val lat = location.latitude.toString()
-                val long = location.longitude.toString()
-
-                locationLiveData.postValue(Pair(lat, long))
-                val updatedNotification = notification.setContentText(
-                    "Location: $lat, $long"
-                )
-
-
-                Log.d("LocationT", "LocationService. Lat: $lat, Long: $long")
-
-                notificationManager.notify(1, updatedNotification.build())
-
-            }.launchIn(serviceScope)
-
-        startForeground(1, notification.build())
-
-    }
-
-    private fun stop() {
-        stopForeground(true)
-        stopSelf()
+        Log.d("Lokalizacja", "LocationService started")
+        return START_STICKY
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        serviceScope.cancel()
+        Log.d("Lokalizacja", "LocationService destroyed")
     }
 
-    companion object {
-        const val ACTION_START = "ACTION_START"
-        const val ACTION_STOP = "ACTION_STOP"
-        val locationLiveData = MutableLiveData<Pair<String, String>>()
+    private fun trackingRealtimeLocation() {
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            return
+        }
+
+        val locationRequest = LocationRequest.create().apply {
+            interval = 1000
+            fastestInterval = 1000
+            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+        }
+
+        val locationCallback = object : LocationCallback() {
+            override fun onLocationResult(locationResult: LocationResult) {
+                val location = locationResult.lastLocation
+                Log.d("Lokalizacja REAL TIME", "${location.latitude}, ${location.longitude}")
+                locationRepository.updateLocation(location.latitude, location.longitude)
+            }
+        }
+
+        fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null)
+
+
     }
+
 }

@@ -2,7 +2,6 @@ package com.example.view_models
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.example.runtracker.data.AppDatabase
-import com.example.runtracker.presentation.screens.active_workout.ActiveWorkoutViewModel
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.HiltTestApplication
@@ -24,12 +23,12 @@ class ActiveWorkoutViewModelTest {
 
     @Inject
     lateinit var appDatabase: AppDatabase
-    private lateinit var viewModel: ActiveWorkoutViewModel
+    private lateinit var viewModel: StartWorkoutViewModel
 
     @Before
     fun setup() {
         hiltRule.inject()
-        viewModel = ActiveWorkoutViewModel(appDatabase)
+        viewModel = StartWorkoutViewModel(appDatabase)
     }
 
     @Test

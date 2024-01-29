@@ -17,7 +17,7 @@ data class UserInfo(
     val userWeight: Int = 70,
 
     @ColumnInfo
-    val age: Int = 0,
+    val age: Int = 25,
 
     // Monthly goal
     @ColumnInfo

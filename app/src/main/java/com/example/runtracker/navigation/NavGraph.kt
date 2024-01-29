@@ -6,7 +6,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.runtracker.presentation.screens.active_workout.ActiveWorkout
+import com.example.runtracker.presentation.screens.active_workout.ActiveScreen
+import com.example.runtracker.presentation.screens.start_workout.StartWorkout
 import com.example.runtracker.presentation.screens.ended_workout.EndedWorkout
 import com.example.runtracker.presentation.screens.home.HomeScreen
 import com.example.runtracker.presentation.screens.profile.ProfileScreen
@@ -29,9 +30,15 @@ fun SetupNavigation() {
         }
 
         composable(
+            route = Screen.StartWorkout.route
+        ) {
+            StartWorkout(navController = navController)
+        }
+
+        composable(
             route = Screen.ActiveWorkout.route
         ) {
-            ActiveWorkout(navController = navController)
+            ActiveScreen(navController = navController)
         }
 
         composable(

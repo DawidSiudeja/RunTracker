@@ -7,6 +7,7 @@ import com.example.runtracker.data.local.dao.WorkoutDao
 import com.example.runtracker.data.local.repository.WorkoutRepository
 import com.example.runtracker.domain.use_cases.UseCases
 import com.example.runtracker.domain.use_cases.get_all_workouts_use_case.GetAllWorkoutsUseCase
+import com.example.runtracker.gps.LocationRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -47,6 +48,12 @@ object AppModule {
         return UseCases(
             getAllWorkoutsUseCase = GetAllWorkoutsUseCase(workoutRepository)
         )
+    }
+
+    @Provides
+    @Singleton
+    fun provideLocationRepository(): LocationRepository {
+        return LocationRepository()
     }
 
 }

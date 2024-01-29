@@ -1,5 +1,6 @@
 package com.example.runtracker.presentation.screens.home
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -39,10 +40,12 @@ fun MonthlyGoals(
     userInfo: UserInfo,
     workouts: List<Workout>
 ) {
-    var distance = 0
+    var distance = 0.00
     for (x in workouts) {
-        distance = (distance + x.distance).roundToInt()
+        distance +=  x.distance
+        Log.d("distance", distance.toString())
     }
+    distance /= 1000
 
     var distanceIsFinished = false
     if (userInfo.kilometersGoal <= distance) {
@@ -71,7 +74,7 @@ fun MonthlyGoals(
             userInfo = userInfo,
             isFinished = distanceIsFinished,
             currentProgress = distanceCurrentProgress,
-            progress = distance,
+            progress = distance.roundToInt(),
             progressGoal = userInfo.kilometersGoal,
             modifier = Modifier.
                 padding(end = 5.dp),

@@ -8,18 +8,17 @@ import android.os.Build
 import com.example.runtracker.constants.Constants.CHANNEL_ID
 import dagger.hilt.android.HiltAndroidApp
 
+
 @HiltAndroidApp
 class Application: Application() {
     override fun onCreate() {
         super.onCreate()
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-
             val channel = NotificationChannel(
                 CHANNEL_ID,
                 "Location",
                 NotificationManager.IMPORTANCE_LOW
             )
-
             val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.createNotificationChannel(channel)
         }

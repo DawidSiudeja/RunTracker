@@ -4,7 +4,6 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import java.time.LocalDateTime
-import java.util.Date
 
 @Entity(tableName = "workouts_table")
 data class Workout(
@@ -20,6 +19,12 @@ data class Workout(
 
     @ColumnInfo
     val kcal: Double = 0.00,
+
+    @ColumnInfo
+    val minutesPerKm: Double = 0.00,
+
+    @ColumnInfo
+    val avgSpeed: Int = 0,
 
     @ColumnInfo
     val isActive: Boolean = false,

@@ -29,14 +29,15 @@ val fontFamily = FontFamily(
 )
 
 // Set of Material typography styles to start with
+@OptIn(ExperimentalTextApi::class)
 val Typography = Typography(
     bodyLarge = TextStyle(
         fontFamily = fontFamily,
-        fontWeight = FontWeight.Normal,
+        fontWeight = FontWeight.Bold,
         fontSize = 16.sp,
         lineHeight = 24.sp,
         letterSpacing = 0.5.sp
-    )
+    ),
     /* Other default text styles to override
     titleLarge = TextStyle(
         fontFamily = FontFamily.Default,

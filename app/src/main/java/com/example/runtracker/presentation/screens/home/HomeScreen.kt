@@ -1,14 +1,19 @@
 package com.example.runtracker.presentation.screens.home
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -18,9 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -28,8 +31,10 @@ import androidx.navigation.NavController
 import com.example.runtracker.R
 import com.example.runtracker.domain.models.UserInfo
 import com.example.runtracker.domain.models.Workout
+import com.example.runtracker.presentation.components.SectionTitle
 import com.example.runtracker.presentation.menu.Menu
-import com.example.runtracker.presentation.workout_item.WorkoutItem
+import com.example.runtracker.presentation.components.WorkoutItem
+import com.example.runtracker.ui.theme.backgroundColor
 import com.example.runtracker.ui.theme.textColor
 
 @Composable
@@ -37,25 +42,30 @@ fun HomeScreen(
     navController: NavController,
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
-
-    val userInfoData = viewModel.getUserInfoData().collectAsState(listOf(UserInfo())).value[0]
+    val userInfoList = viewModel.getUserInfoData().collectAsState(listOf(UserInfo())).value
     val workoutsData = viewModel.getAllWorkouts().collectAsState(listOf(Workout())).value
+
+    var userInfoData = UserInfo()
+
+    if (userInfoList.isNotEmpty()) {
+        userInfoData = userInfoList[0]
+    }
 
     Column(
         modifier = Modifier
-            .fillMaxHeight()
-            .padding(top = 30.dp),
-        verticalArrangement = Arrangement.SpaceBetween,
+            .fillMaxSize(),
+        verticalArrangement = Arrangement.SpaceBetween
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 20.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .fillMaxHeight(.85f)
+                .padding(start = 20.dp, top = 20.dp, end = 20.dp)
+                .verticalScroll(rememberScrollState())
         ) {
             Greetings(nick = userInfoData.nickname)
 
-            Spacer(modifier = Modifier.height(40.dp))
+            Spacer(modifier = Modifier.height(30.dp))
 
             Column {
                 SectionTitle(title = "Monthly goals activities")
@@ -65,19 +75,34 @@ fun HomeScreen(
                 )
             }
 
-            Spacer(modifier = Modifier.height(40.dp))
+            Spacer(modifier = Modifier.height(30.dp))
             Column {
                 SectionTitle(title = "Your last workout")
-                WorkoutItem(workout = workoutsData[workoutsData.size - 1])
+                if (workoutsData.size != 0) {
+                    WorkoutItem(workout = workoutsData[workoutsData.size - 1], navController)
+                } else {
+                    Text(
+                        text = "No workouts yet",
+                        color = textColor,
+                        fontSize = 16.sp
+                    )
+                }
             }
 
-
+            Spacer(modifier = Modifier.height(10.dp))
+            /*
+            Column {
+                SectionTitle(title = "Daily steps goal")
+            }
+             */
         }
+
         Menu(
             navController = navController,
-            currentScreen = "Home"
+            currentScreen = "Home",
         )
     }
+
 
 }
 
@@ -104,15 +129,3 @@ fun Greetings(nick: String) {
 }
 
 
-@Composable
-fun SectionTitle(title: String) {
-    Text(
-        text = title,
-        style = TextStyle(
-            fontSize = 20.sp,
-            fontWeight = FontWeight(900),
-            color = textColor,
-        )
-    )
-    Spacer(modifier = Modifier.height(10.dp))
-}

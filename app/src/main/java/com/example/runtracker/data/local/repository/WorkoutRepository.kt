@@ -20,7 +20,7 @@ class WorkoutRepository(
     suspend fun updateListPointsOfWorkout(points: List<String>, id: Int)
         = workoutDao.updateListPointsOfWorkout(points, id)
 
-    suspend fun updateKcal(kcal: Double, id: Int)
+    suspend fun updateKcal(kcal: Int, id: Int)
         = workoutDao.updateKcal(kcal, id)
 
     suspend fun setActiveOfWorkout(isActive: Boolean, id: Int)
@@ -29,7 +29,13 @@ class WorkoutRepository(
     suspend fun updateDistance(distance: Double, id: Int)
         = workoutDao.updateDistance(distance, id)
 
-    suspend fun addConstValueOfTime(id: Int)
-        = workoutDao.addConstValueOfTime(id)
+    suspend fun updateTimeOfWorkout(time:Int, id: Int)
+            = workoutDao.updateTimeOfWorkout(time, id)
+
+    suspend fun updateMinutesPerKmOfWorkout(minutesPerKm: Double, id: Int)
+            = workoutDao.updateMinutesPerKmOfWorkout(minutesPerKm, id)
+
+    suspend fun updateAvgSpeedOfWorkout(avgSpeed: Int, id: Int)
+            = workoutDao.updateAvgSpeedOfWorkout(avgSpeed, id)
 
 }
