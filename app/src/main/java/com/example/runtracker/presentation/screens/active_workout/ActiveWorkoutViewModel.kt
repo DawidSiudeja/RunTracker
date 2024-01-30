@@ -1,13 +1,21 @@
 package com.example.runtracker.presentation.screens.active_workout
 
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
+import android.content.Intent
 import android.util.Log
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.runtracker.constants.Constants
 import com.example.runtracker.data.AppDatabase
 import com.example.runtracker.domain.models.Workout
 import com.example.runtracker.gps.LocationRepository
+import com.example.runtracker.gps.NotificationService
+import dagger.hilt.android.internal.Contexts.getApplication
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -21,12 +29,17 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import kotlin.math.*
-
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.launch
 
 @HiltViewModel
 class ActiveWorkoutViewModel @Inject constructor(
     private val appDatabase: AppDatabase,
-    private val locationRepository: LocationRepository
+    private val locationRepository: LocationRepository,
+    @ApplicationContext private val context: Context
 ): ViewModel(){
     private var workoutId = 0
     var locationData: LiveData<Pair<Double, Double>> = locationRepository.locationData
@@ -47,6 +60,8 @@ class ActiveWorkoutViewModel @Inject constructor(
     val location = _location.asStateFlow()
     private var locationJob: Job? = null
 
+    private var notifyJob: Job? = null
+
     init {
         startWorkout()
 
@@ -63,6 +78,7 @@ class ActiveWorkoutViewModel @Inject constructor(
             workoutId = appDatabase.workoutDao().getAllWorkouts().first().size
             startTimer()
             startObserveLocation(locationData, workoutId)
+            startNotifyService()
         }
     }
 
@@ -79,7 +95,7 @@ class ActiveWorkoutViewModel @Inject constructor(
             appDatabase.workoutDao().updateMinutesPerKmOfWorkout(minutesPerKm.value ,id)
             appDatabase.workoutDao().updateAvgSpeedOfWorkout(speedKmPerHour, id)
             appDatabase.workoutDao().updateKcal(kcalBurned, id)
-
+            stopNotifyService()
             stopMinutesPerKm()
             stopDistance()
             stopTimer()
@@ -267,5 +283,48 @@ class ActiveWorkoutViewModel @Inject constructor(
         super.onCleared()
         timerJob?.cancel()
         distanceJob?.cancel()
+    }
+
+    fun startNotifyService() {
+        notifyJob?.cancel()
+        notifyJob = viewModelScope.launch {
+            while (true) {
+                delay(1000)
+                withContext(Dispatchers.Main) {
+
+                    val timeNotify = formatTime(timer.value)
+                    val distanceNotify = String.format("%.1f", distance.value / 1000)
+
+                    val notificationManager = getApplication(context.applicationContext)
+                        .getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+                    val channel = NotificationChannel(
+                        Constants.CHANNEL_ID,
+                        "Location",
+                        NotificationManager.IMPORTANCE_DEFAULT
+                    )
+
+                    notificationManager.createNotificationChannel(channel)
+
+                    val serviceIntent2 = Intent(getApplication(context.applicationContext), NotificationService::class.java)
+                    serviceIntent2.putExtra("message",
+                        "Duration: $timeNotify \n" +
+                                "Distance: $distanceNotify km")
+                    ContextCompat.startForegroundService(getApplication(context.applicationContext), serviceIntent2)
+                }
+            }
+        }
+
+    }
+
+    fun stopNotifyService() {
+        notifyJob?.cancel()
+    }
+
+    fun formatTime(timeToFormat: Int): String {
+        val hours = timeToFormat / 3600
+        val minutes = (timeToFormat % 3600) / 60
+        val remainingSeconds = timeToFormat % 60
+        return String.format("%02d:%02d:%02d", hours, minutes, remainingSeconds)
     }
 }

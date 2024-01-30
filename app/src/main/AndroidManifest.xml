@@ -23,9 +23,10 @@
         android:theme="@style/Theme.RunTracker"
         tools:targetApi="31">
         <service android:name=".gps.LocationService" android:foregroundServiceType="location"/>
+        <service android:name=".gps.NotificationService"/>
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyAqPXndYznlArV8IqdF32_FqvSVIbc8lzo"/>
+            android:value="AIzaSyC3DwQbwl2C6mMokWduNnGh8So-ZEEpUCY"/>
         <activity
             android:name=".MainActivity"
             android:exported="true"

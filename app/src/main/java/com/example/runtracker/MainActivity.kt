@@ -11,6 +11,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.core.app.ActivityCompat
 import com.example.runtracker.gps.LocationService
+import com.example.runtracker.gps.NotificationService
 import com.example.runtracker.navigation.SetupNavigation
 import com.example.runtracker.ui.theme.RunTrackerTheme
 import com.google.android.gms.location.FusedLocationProviderClient

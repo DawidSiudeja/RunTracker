@@ -33,6 +33,9 @@ import com.example.runtracker.domain.models.Workout
 import com.example.runtracker.ui.theme.OrangeSecondaryColor
 import com.example.runtracker.ui.theme.OrangeSecondaryColorAspect
 import com.example.runtracker.ui.theme.lightBlack
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import kotlin.math.roundToInt
 
 @Composable
@@ -40,10 +43,18 @@ fun MonthlyGoals(
     userInfo: UserInfo,
     workouts: List<Workout>
 ) {
-    var distance = 0.00
+    val currentDate = LocalDate.now()
+    val formatter = DateTimeFormatter.ofPattern("yyyy-MM")
+    val currentDateAsString = currentDate.format(formatter)
+
+    var distance = 0.0  // Assuming distance is of type Double
+    var workoutsAmounts = 0
+
     for (x in workouts) {
-        distance +=  x.distance
-        Log.d("distance", distance.toString())
+        if (x.date.substring(0, 7) == currentDateAsString) {
+            workoutsAmounts += 1
+            distance += x.distance
+        }
     }
     distance /= 1000
 
@@ -54,16 +65,12 @@ fun MonthlyGoals(
 
     val distanceCurrentProgress: Float = distance.toFloat() / userInfo.kilometersGoal.toFloat()
 
-
-    var workouts = workouts.size
-
-
     var workoutsIsFinished = false
-    if (userInfo.workoutsGoal <= workouts) {
+    if (userInfo.workoutsGoal <= workoutsAmounts) {
         workoutsIsFinished = true
     }
 
-    val workoutsCurrentProgress: Float = workouts.toFloat() / userInfo.workoutsGoal.toFloat()
+    val workoutsCurrentProgress: Float = workoutsAmounts.toFloat() / userInfo.workoutsGoal.toFloat()
 
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -86,7 +93,7 @@ fun MonthlyGoals(
             userInfo = userInfo,
             isFinished = workoutsIsFinished,
             currentProgress = workoutsCurrentProgress,
-            progress = workouts,
+            progress = workoutsAmounts,
             progressGoal = userInfo.workoutsGoal,
             width = .95f,
             modifier = Modifier.

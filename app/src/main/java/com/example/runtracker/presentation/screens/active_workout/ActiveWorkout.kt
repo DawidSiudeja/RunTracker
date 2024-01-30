@@ -1,5 +1,10 @@
 package com.example.runtracker.presentation.screens.active_workout
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
+import android.content.Intent
+import android.os.Build
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -26,12 +31,18 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.runtracker.R
+import com.example.runtracker.constants.Constants
+import com.example.runtracker.gps.NotificationService
 import com.example.runtracker.navigation.Screen
 import com.example.runtracker.presentation.components.navigate
 import com.example.runtracker.ui.theme.OrangeSecondaryColor
+
 
 @Composable
 fun ActiveScreen(
@@ -53,6 +64,8 @@ fun ActiveScreen(
     val minutesPerKM: Double by viewModel.minutesPerKm.collectAsState()
 
 
+
+
     Column(
         modifier = Modifier
             .fillMaxHeight()
@@ -60,7 +73,7 @@ fun ActiveScreen(
         verticalArrangement = Arrangement.SpaceAround
     ) {
 
-        TimerScreenContent(timerValue)
+        TimerScreenContent(timerValue, viewModel)
         Spacer()
         DistanceInKilometers(distance)
         Spacer()
@@ -115,14 +128,16 @@ fun MinutesPerKm(minutesPerKm: Double) {
 
 
 @Composable
-fun TimerScreenContent(timerValue: Int) {
+fun TimerScreenContent(timerValue: Int, viewModel: ActiveWorkoutViewModel) {
     TimerScreen(
         timerValue = timerValue,
+        viewModel = viewModel
     )
 }
 @Composable
 fun TimerScreen(
-    timerValue: Int
+    timerValue: Int,
+    viewModel: ActiveWorkoutViewModel
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -130,7 +145,7 @@ fun TimerScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = timerValue.formatTime(),
+            text = viewModel.formatTime(timerValue),
             fontSize = 70.sp,
             fontWeight = FontWeight.Bold
         )
@@ -185,11 +200,4 @@ fun Spacer() {
             .background(Color.LightGray)
             .padding(vertical = 20.dp)
     )
-}
-
-fun Int.formatTime(): String {
-    val hours = this / 3600
-    val minutes = (this % 3600) / 60
-    val remainingSeconds = this % 60
-    return String.format("%02d:%02d:%02d", hours, minutes, remainingSeconds)
 }
