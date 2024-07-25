@@ -26,7 +26,7 @@
         <service android:name=".gps.NotificationService"/>
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyC3DwQbwl2C6mMokWduNnGh8So-ZEEpUCY"/>
+            android:value="YOUR_API_KEY"/>
         <activity
             android:name=".MainActivity"
             android:exported="true"
