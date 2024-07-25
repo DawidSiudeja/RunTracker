@@ -13,14 +13,12 @@
 
   <h2>Project Structure</h2>
     <ul>
-        <li><strong>core:</strong> Contains classes related to entities and the database.</li>
-        <li><strong>tracking:</strong> Responsible for handling run tracking.</li>
+        <li><strong>data:</strong> Contains classes related to entities and the database.</li>
         <li><strong>di:</strong> Hilt modules.</li>
-        <li><strong>domain:</strong> Shared use cases.</li>
-        <li><strong>ui.nav:</strong> Navigation within the app.</li>
-        <li><strong>ui.screen:</strong> UI components.</li>
-        <li><strong>theme:</strong> Material3 theme.</li>
-        <li><strong>common:</strong> Utility classes and shared components.</li>
+        <li><strong>domain:</strong> Models and use cases.</li>
+        <li><strong>gps:</strong> Responsible for handling run tracking.</li>
+        <li><strong>navigation:</strong> Navigation within the app.</li>
+        <li><strong>presentation:</strong> User Interface Design and ViewModel Logic</li>
     </ul>
 
   <h2>Technologies</h2>
@@ -31,9 +29,7 @@
         <li><strong>Room:</strong> For storing and managing run statistics.</li>
         <li><strong>Google Maps API:</strong> For tracking running activities, including speed, distance, and route display.</li>
         <li><strong>Hilt:</strong> For dependency injection.</li>
-        <li><strong>Preferences DataStore:</strong> For storing user data.</li>
         <li><strong>Coil:</strong> For asynchronous image loading.</li>
-        <li><strong>Vico:</strong> For displaying charts in the statistics screen.</li>
     </ul>
 
   <h2>Installation</h2>
