@@ -8,7 +8,6 @@
         <li>Utilizing Foreground Service – even if the user closes the app or sends it to the background, run tracking will continue.</li>
         <li>Room database for storing and managing run statistics.</li>
         <li>Jetpack Navigation Component for nested navigation, deep linking, and conditional navigation to the onboarding screen.</li>
-        <li>Integration with Paging3.</li>
         <li>Weekly statistics with filterable charts.</li>
     </ul>
 
